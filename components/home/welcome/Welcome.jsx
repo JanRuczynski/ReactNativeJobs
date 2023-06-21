@@ -12,11 +12,20 @@ import { useRouter } from "expo-router";
 import styles from "./welcome.style";
 import { icons, SIZES } from "../../../constants";
 
-const jobTypes = ["Full-time", "Part-time", "Contractor"];
+const jobTypes = [
+  { en: "Full-time", pl: "Pełny etat" },
+  { en: "Part-time", pl: "Część etatu" },
+  { en: "Contractor", pl: "Kontraktor" },
+];
 
 const Welcome = ({ searchTerm, setSearchTerm, handleClick }) => {
   const router = useRouter();
   const [activeJobType, setActiveJobType] = useState("Full-time");
+
+  const getTranslatedJobType = (type) => {
+    const translatedType = jobTypes.find((jobType) => jobType.en === type);
+    return translatedType ? translatedType.pl : type;
+  };
 
   return (
     <View>
@@ -49,16 +58,18 @@ const Welcome = ({ searchTerm, setSearchTerm, handleClick }) => {
           data={jobTypes}
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={styles.tab(activeJobType, item)}
+              style={styles.tab(activeJobType, item.en)}
               onPress={() => {
-                setActiveJobType(item);
-                router.push(`/search/${item}`);
+                setActiveJobType(item.en);
+                router.push(`/search/${item.en}`);
               }}
             >
-              <Text style={styles.tabText(activeJobType, item)}>{item}</Text>
+              <Text style={styles.tabText(activeJobType, item)}>
+                {getTranslatedJobType(item.en)}
+              </Text>
             </TouchableOpacity>
           )}
-          keyExtractor={(item) => item}
+          keyExtractor={(item) => item.en}
           contentContainerStyle={{ columnGap: SIZES.small }}
           horizontal
         />
